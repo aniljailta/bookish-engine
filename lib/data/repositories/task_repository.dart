@@ -32,4 +32,11 @@ class TaskRepository implements ITaskRepository {
         TaskModel(id: task.id, title: task.title, isCompleted: task.isCompleted)
             .toMap());
   }
+
+  @override
+  Future<void> editTaskTitle(Task task) async {
+    await _dbService.updateTask(
+        TaskModel(id: task.id, title: task.title, isCompleted: task.isCompleted)
+            .toMap());
+  }
 }

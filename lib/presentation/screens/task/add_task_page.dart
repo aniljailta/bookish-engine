@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_list/config/app_string_constants.dart';
 import '../../../di/injection.dart';
 import '../../controllers/task_controller.dart';
 
@@ -15,7 +16,7 @@ class AddTaskPage extends StatelessWidget {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
-        title: const Text('Add New Task'),
+        title: const Text(AppStrings.addTaskButtonLabel),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -24,8 +25,8 @@ class AddTaskPage extends StatelessWidget {
             TextField(
               controller: taskController,
               decoration: InputDecoration(
-                labelText: 'Add Task',
-                hintText: 'Enter your task here',
+                labelText: AppStrings.addTaskInputPlaceholder,
+                hintText: AppStrings.taskInputPlaceholder,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
@@ -50,7 +51,7 @@ class AddTaskPage extends StatelessWidget {
                 if (title.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Please enter a task first'),
+                      content: Text(AppStrings.taskInputValidationMessage),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -62,7 +63,7 @@ class AddTaskPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text('Save'),
+              child: const Text(AppStrings.saveButtonLabel),
             ),
           ],
         ),

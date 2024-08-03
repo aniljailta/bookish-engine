@@ -3,6 +3,7 @@ import '../data/repositories/task_repository.dart';
 import '../data/services/db_service.dart';
 import '../domain/usecases/add_task.dart';
 import '../domain/usecases/delete_task.dart';
+import '../domain/usecases/edit_task_title.dart';
 import '../domain/usecases/get_tasks.dart';
 import '../domain/usecases/update_task.dart';
 import '../presentation/controllers/task_controller.dart';
@@ -26,6 +27,8 @@ void setupLocator() {
       () => GetTasks(locator<TaskRepository>()));
   locator.registerLazySingleton<UpdateTask>(
       () => UpdateTask(locator<TaskRepository>()));
+  locator.registerLazySingleton<EditTaskTitle>(
+      () => EditTaskTitle(locator<TaskRepository>()));
 
   // Controllers
   locator.registerLazySingleton<TaskController>(() => TaskController(
@@ -33,5 +36,6 @@ void setupLocator() {
         deleteTaskUseCase: locator<DeleteTask>(),
         getTasksUseCase: locator<GetTasks>(),
         updateTaskUseCase: locator<UpdateTask>(),
+        editTaskTitleUseCase: locator<EditTaskTitle>(),
       ));
 }

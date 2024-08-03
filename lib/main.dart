@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_list/app_pages.dart';
 import 'bindings/bindings.dart';
-import 'config/apptheme.dart';
+import 'config/app_theme.dart';
 import 'di/injection.dart' as get_it;
 
 void main() async {

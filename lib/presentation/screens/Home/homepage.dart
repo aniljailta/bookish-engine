@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_list/config/app_string_constants.dart';
 import '../../../di/injection.dart';
+import '../../../domain/entities/task.dart';
 import '../../controllers/task_controller.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,7 +20,7 @@ class HomePage extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: () => Get.toNamed('/add'),
             icon: const Icon(Icons.add),
-            label: const Text('Add New Task'),
+            label: const Text(AppStrings.addTaskButtonLabel),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
             ),
@@ -26,12 +28,14 @@ class HomePage extends StatelessWidget {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         appBar: AppBar(
-          title: const Text('To-Do List'),
+          title: const Text(AppStrings.appTitle),
           centerTitle: true,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(80),
             child: TabBar(
+              tabAlignment: TabAlignment.fill,
+              labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 color: Colors.white.withOpacity(0.2),
@@ -53,7 +57,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       Icon(Icons.list),
                       SizedBox(width: 8),
-                      Text('All'),
+                      Text(AppStrings.showAllFilter),
                     ],
                   ),
                 ),
@@ -63,7 +67,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       Icon(Icons.check_circle),
                       SizedBox(width: 8),
-                      Text('Done'),
+                      Text(AppStrings.showCompletedFilter),
                     ],
                   ),
                 ),
@@ -73,7 +77,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       Icon(Icons.pending),
                       SizedBox(width: 8),
-                      Text('Pending'),
+                      Text(AppStrings.showPendingFilter),
                     ],
                   ),
                 ),
@@ -100,8 +104,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildTaskList(BuildContext context, TaskFilter filter) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          16.0, 16.0, 16.0, 80.0), // Added bottom padding
+      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
       child: Obx(() {
         final filteredTasks = taskController.getFilteredTasks(filter);
 
@@ -113,7 +116,7 @@ class HomePage extends StatelessWidget {
                 decelerationRate: ScrollDecelerationRate.fast),
             itemCount: filteredTasks.length,
             itemBuilder: (context, index) {
-              final task = filteredTasks[index];
+              final Task task = filteredTasks[index];
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
                 child: ListTile(
@@ -128,6 +131,11 @@ class HomePage extends StatelessWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      IconButton(
+                        icon: Icon(Icons.edit,
+                            color: Theme.of(context).colorScheme.primary),
+                        onPressed: () => _showEditDialog(context, task),
+                      ),
                       Checkbox(
                         value: task.isCompleted == 0 ? false : true,
                         onChanged: (bool? value) {
@@ -152,17 +160,54 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void _showEditDialog(BuildContext context, Task task) {
+    final TextEditingController textController =
+        TextEditingController(text: task.title);
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: const Text(AppStrings.editTask),
+        content: TextField(
+          controller: textController,
+          decoration: const InputDecoration(
+            labelText: AppStrings.editTaskInputPlaceholder,
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            child: const Text(AppStrings.cancelButtonLabel),
+            onPressed: () => Get.back(),
+          ),
+          ElevatedButton(
+            child: const Text(AppStrings.saveButtonLabel),
+            onPressed: () {
+              if (textController.text.isNotEmpty) {
+                taskController.editTaskTitle(
+                  textController.text,
+                  task.id!,
+                );
+                Get.back();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context, TaskFilter filter) {
     String message;
     switch (filter) {
       case TaskFilter.all:
-        message = 'No tasks yet';
+        message = AppStrings.emptyAllTasksMessage;
         break;
       case TaskFilter.completed:
-        message = 'No completed tasks';
+        message = AppStrings.emptyCompletedMessage;
         break;
       case TaskFilter.pending:
-        message = 'No pending tasks';
+        message = AppStrings.emptyPendingMessage;
         break;
     }
 
@@ -185,7 +230,7 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Your tasks will appear here',
+            AppStrings.taskListPlaceholder,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color:
                       Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
