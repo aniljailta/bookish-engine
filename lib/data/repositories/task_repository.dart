@@ -10,7 +10,9 @@ class TaskRepository implements ITaskRepository {
 
   @override
   Future<void> addTask(Task task) async {
-    await _dbService.addTask(TaskModel(id: task.id, title: task.title).toMap());
+    await _dbService.addTask(
+        TaskModel(id: task.id, title: task.title, isCompleted: task.isCompleted)
+            .toMap());
   }
 
   @override
@@ -22,5 +24,12 @@ class TaskRepository implements ITaskRepository {
   Future<List<Task>> getTasks() async {
     final taskMaps = await _dbService.getTasks();
     return taskMaps.map((taskMap) => TaskModel.fromMap(taskMap)).toList();
+  }
+
+  @override
+  Future<void> updateTask(Task task) async {
+    await _dbService.updateTask(
+        TaskModel(id: task.id, title: task.title, isCompleted: task.isCompleted)
+            .toMap());
   }
 }

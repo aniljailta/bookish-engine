@@ -21,14 +21,21 @@ class DBService {
     String path = join(await getDatabasesPath(), 'tasks.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL
+            title TEXT NOT NULL,
+            isCompleted INTEGER NOT NULL DEFAULT 0
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute(
+              'ALTER TABLE tasks ADD COLUMN isCompleted INTEGER NOT NULL DEFAULT 0');
+        }
       },
     );
   }
@@ -46,5 +53,15 @@ class DBService {
   Future<int> deleteTask(int id) async {
     final db = await database;
     return await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateTask(Map<String, dynamic> taskMap) async {
+    final db = await database;
+    return await db.update(
+      'tasks',
+      taskMap,
+      where: 'id = ?',
+      whereArgs: [taskMap['id']],
+    );
   }
 }

@@ -4,6 +4,7 @@ import '../data/services/db_service.dart';
 import '../domain/usecases/add_task.dart';
 import '../domain/usecases/delete_task.dart';
 import '../domain/usecases/get_tasks.dart';
+import '../domain/usecases/update_task.dart';
 import '../presentation/controllers/task_controller.dart';
 
 final GetIt locator = GetIt.instance;
@@ -23,11 +24,14 @@ void setupLocator() {
       () => DeleteTask(locator<TaskRepository>()));
   locator.registerLazySingleton<GetTasks>(
       () => GetTasks(locator<TaskRepository>()));
+  locator.registerLazySingleton<UpdateTask>(
+      () => UpdateTask(locator<TaskRepository>()));
 
   // Controllers
   locator.registerLazySingleton<TaskController>(() => TaskController(
         addTaskUseCase: locator<AddTask>(),
         deleteTaskUseCase: locator<DeleteTask>(),
         getTasksUseCase: locator<GetTasks>(),
+        updateTaskUseCase: locator<UpdateTask>(),
       ));
 }
